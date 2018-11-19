@@ -537,4 +537,6 @@
     <string name="ingredients">Ingredients</string>
     <string name="step_id">Step:</string>
   <string name="navigate">Browse Steps</string>
+    <string name="home">Home</string>
+    <string name="cheesecake">Cheesecake</string>
 </resources>

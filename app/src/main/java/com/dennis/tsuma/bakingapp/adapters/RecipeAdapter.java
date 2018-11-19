@@ -1,4 +1,19 @@
 package com.dennis.tsuma.bakingapp.adapters;
+/*
+ * Copyright (C) 2018 The Android Open Source Project
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
@@ -8,18 +23,17 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.dennis.tsuma.bakingapp.BakingAppApplication;
 import com.dennis.tsuma.bakingapp.R;
 import com.dennis.tsuma.bakingapp.models.Recipe;
-import com.squareup.picasso.Callback;
-import com.squareup.picasso.NetworkPolicy;
-import com.squareup.picasso.Picasso;
+
+import java.util.List;
 
 public class RecipeAdapter extends RecyclerView.Adapter<RecipeAdapter.RecipeViewHolder> {
-    private Recipe[] recipes;
+    private List<Recipe> recipes;
     private CardListener mCardListener;
+    private int[] drawables = {R.mipmap.nutella_pie, R.mipmap.brownie, R.mipmap.yellow_cake, R.mipmap.cheesecake};
 
-    public RecipeAdapter(Recipe[] recipes, CardListener mCardListener) {
+    public RecipeAdapter(List<Recipe> recipes, CardListener mCardListener) {
         this.recipes = recipes;
         this.mCardListener= mCardListener;
     }
@@ -35,7 +49,7 @@ public class RecipeAdapter extends RecyclerView.Adapter<RecipeAdapter.RecipeView
 
     @Override
     public void onBindViewHolder(@NonNull RecipeViewHolder holder, int position) {
-        holder.bind(recipes[position]);
+        holder.bind(recipes.get(position));
     }
 
     @Override
@@ -45,7 +59,7 @@ public class RecipeAdapter extends RecyclerView.Adapter<RecipeAdapter.RecipeView
 
     @Override
     public int getItemCount() {
-        return recipes.length;
+        return recipes.size();
     }
     public interface CardListener{
         void onCardClicked(Recipe recipe);
@@ -66,39 +80,8 @@ public class RecipeAdapter extends RecyclerView.Adapter<RecipeAdapter.RecipeView
         }
 
         private void bind(final Recipe recipe) {
-            if (recipe.getImage() != null) {
-                if (!recipe.getImage().isEmpty()) {
-                    BakingAppApplication.getApp()
-                            .getPicassoWithCache()
-                            .load(recipe.getImage())
-                            .priority(Picasso.Priority.HIGH)
-                            .networkPolicy(NetworkPolicy.OFFLINE)
-                            .into(image, new Callback() {
-                                @Override
-                                public void onSuccess() {
-                                }
+            image.setImageResource(drawables[getAdapterPosition()]);
 
-                                @Override
-                                public void onError() {
-                                    BakingAppApplication.getApp()
-                                            .getPicassoWithCache()
-                                            .load(recipe.getImage())
-                                            .priority(Picasso.Priority.HIGH)
-                                            // .networkPolicy(NetworkPolicy.OFFLINE)
-                                            .into(image, new Callback() {
-                                                @Override
-                                                public void onSuccess() {
-                                                }
-
-                                                @Override
-                                                public void onError() {
-
-                                                }
-                                            });
-                                }
-                            });
-                }
-            }
             if(recipe.getName() != null){
                 name.setText(String.format("Name: %s", recipe.getName()));
             }
@@ -114,7 +97,7 @@ public class RecipeAdapter extends RecyclerView.Adapter<RecipeAdapter.RecipeView
 
         @Override
         public void onClick(View v) {
-            mCardListener.onCardClicked(recipes[getAdapterPosition()]);
+            mCardListener.onCardClicked(recipes.get(getAdapterPosition()));
         }
     }
 }

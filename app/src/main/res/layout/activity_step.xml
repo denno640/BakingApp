@@ -2,8 +2,6 @@
 <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:tools="http://schemas.android.com/tools"
-    tools:context=".ui.StepActivity"
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <android.support.v7.widget.CardView
         android:layout_width="match_parent"
@@ -11,7 +9,6 @@
         app:cardCornerRadius="@dimen/card_corner_radius_4dp"
         app:cardElevation="@dimen/margin_8dp"
         android:clipChildren="false"
-        android:onClick="onIngredientsClick"
         android:clipToPadding="false"
         app:cardUseCompatPadding="true"
         android:clickable="true"

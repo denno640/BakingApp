@@ -1,7 +1,5 @@
 package com.dennis.tsuma.bakingapp.ui;
 
-import android.annotation.SuppressLint;
-import android.arch.lifecycle.ViewModelProviders;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -10,11 +8,14 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
 import android.widget.TextView;
 
 import com.dennis.tsuma.bakingapp.R;
+import com.dennis.tsuma.bakingapp.models.Recipe;
 import com.dennis.tsuma.bakingapp.models.Step;
 import com.dennis.tsuma.bakingapp.viewmodels.StepDetailViewModel;
+import com.google.android.exoplayer2.C;
 import com.google.android.exoplayer2.DefaultLoadControl;
 import com.google.android.exoplayer2.DefaultRenderersFactory;
 import com.google.android.exoplayer2.ExoPlayerFactory;
@@ -35,9 +36,23 @@ public class MainFragment extends Fragment {
     private long playbackPosition;
     private int currentWindow;
     private boolean playWhenReady = true;
+    private Recipe recipe;
+    private int mIndex = 0;
+    private int state;
+    private ImageButton leftButton;
+    private ImageButton rightButton;
 
 
     public MainFragment() {
+    }
+
+    public void setRecipe(Recipe recipe) {
+        this.recipe = recipe;
+        if (playerView != null && description != null
+                && leftButton != null && rightButton != null) {
+            onStepReceived(recipe.getSteps().get(0));
+        }
+
     }
 
     @Nullable
@@ -46,13 +61,52 @@ public class MainFragment extends Fragment {
         View rootView = inflater.inflate(R.layout.fragment_main, container, false);
         playerView = rootView.findViewById(R.id.player);
         description = rootView.findViewById(R.id.description);
-        viewModel = ViewModelProviders.of(getActivity()).get(StepDetailViewModel.class);
-        viewModel.getStepMutableLiveData().observe(this, this::onStepReceived);
+        leftButton = rootView.findViewById(R.id.left_btn);
+        rightButton = rootView.findViewById(R.id.right_btn);
+         /*      if(savedInstanceState != null){
+                   //Toast.makeText(getActivity(), "savedInstanceState is not null", Toast.LENGTH_SHORT).show();
+                   playbackPosition=savedInstanceState.getLong("position");
+            state= savedInstanceState.getInt("state");
+            currentWindow= savedInstanceState.getInt("current");
+            mIndex=savedInstanceState.getInt("mIndex");
+        }*/
+        if (savedInstanceState != null) {
+            playbackPosition = savedInstanceState.getLong("position");
+            currentWindow = savedInstanceState.getInt("current");
+            mIndex = savedInstanceState.getInt("mIndex");
+            playWhenReady = savedInstanceState.getBoolean("playWhenReady");
+            recipe = savedInstanceState.getParcelable("recipe");
+        }
+        leftButton.setOnClickListener(v -> {
+            if (recipe != null) {
+                if (mIndex > 0) {
+                    mIndex--;
+                    onStepReceived(recipe.getSteps().get(mIndex));
+                    if (mIndex == 0) leftButton.setVisibility(View.INVISIBLE);
+                    if (mIndex < recipe.getSteps().size() - 1)
+                        rightButton.setVisibility(View.VISIBLE);
+                }
+            }
+        });
+        rightButton.setOnClickListener(v -> {
+            if (recipe != null) {
+                if (mIndex != recipe.getSteps().size() - 1) {
+                    mIndex++;
+                    if (mIndex > 0) leftButton.setVisibility(View.VISIBLE);
+                    onStepReceived(recipe.getSteps().get(mIndex));
+                    if (mIndex == recipe.getSteps().size() - 1)
+                        rightButton.setVisibility(View.INVISIBLE);
+                }
+            }
+        });
+        if (recipe != null) onStepReceived(recipe.getSteps().get(mIndex));
         return rootView;
     }
 
+
     private void onStepReceived(Step step) {
         if (step != null) {
+
             releasePlayer();
             if (step.getVideoURL() != null) {
                 if (!step.getVideoURL().isEmpty()) {
@@ -97,12 +151,15 @@ public class MainFragment extends Fragment {
                 new DefaultTrackSelector(), new DefaultLoadControl());
 
         playerView.setPlayer(player);
-
-        player.setPlayWhenReady(playWhenReady);
-        player.seekTo(currentWindow, playbackPosition);
         Uri uri = Uri.parse(mediaUrl);
         MediaSource mediaSource = buildMediaSource(uri);
         player.prepare(mediaSource, true, false);
+        if (playbackPosition > 0 && playbackPosition != C.TIME_UNSET) {
+            player.seekTo(playbackPosition);
+            player.setPlayWhenReady(playWhenReady);
+        } else {
+            player.setPlayWhenReady(playWhenReady);
+        }
     }
 
     private MediaSource buildMediaSource(Uri uri) {
@@ -153,4 +210,15 @@ public class MainFragment extends Fragment {
         }
     }
 
+    @Override
+    public void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putLong("position", playbackPosition);
+        outState.putInt("current", currentWindow);
+        outState.putBoolean("playWhenReady", playWhenReady);
+        outState.putInt("mIndex", mIndex);
+        if (recipe != null)
+            outState.putParcelable("recipe", recipe);
+
+    }
 }

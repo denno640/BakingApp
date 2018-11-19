@@ -8,8 +8,8 @@
 
 
         <FrameLayout
-            android:layout_width="@dimen/margin_0dp"
-            android:layout_height="@dimen/margin_0dp"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
             android:id="@+id/container"
             android:layout_marginBottom="@dimen/margin_8dp"
             android:layout_marginEnd="@dimen/margin_8dp"
@@ -19,45 +19,6 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toTopOf="@id/left_btn"/>
-
-
-    <ImageButton
-        android:layout_width="@dimen/size_50dp"
-        android:layout_height="@dimen/size_50dp"
-        android:id="@+id/left_btn"
-        android:layout_marginBottom="@dimen/margin_8dp"
-        android:layout_marginStart="@dimen/margin_8dp"
-        android:layout_marginTop="@dimen/margin_8dp"
-        android:onClick="onBackClicked"
-        android:background="@drawable/ic_left"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        android:contentDescription="@string/description"/>
-    <ImageButton
-        android:layout_width="@dimen/size_50dp"
-        android:layout_height="@dimen/size_50dp"
-        android:id="@+id/right_btn"
-        android:layout_marginBottom="@dimen/margin_8dp"
-        android:layout_marginStart="@dimen/margin_8dp"
-        android:layout_marginTop="@dimen/margin_8dp"
-        android:onClick="onNextClicked"
-        android:background="@drawable/ic_right"
-        app:layout_constraintBottom_toBottomOf="parent"
-app:layout_constraintEnd_toEndOf="parent"
-        android:contentDescription="@string/description"/>
-    <TextView
-        android:layout_width="@dimen/margin_0dp"
-        android:layout_height="wrap_content"
-        android:gravity="center"
-        android:id="@+id/navigate"
-        android:layout_marginStart="@dimen/margin_8dp"
-        android:layout_marginEnd="@dimen/margin_8dp"
-        android:layout_marginBottom="@dimen/margin_8dp"
-        app:layout_constraintStart_toEndOf="@id/left_btn"
-        app:layout_constraintEnd_toStartOf="@id/right_btn"
-        app:layout_constraintBottom_toBottomOf="parent"
-        android:text="@string/navigate"
-        app:layout_constraintTop_toBottomOf="@id/container"/>
 
 
 </android.support.constraint.ConstraintLayout>
